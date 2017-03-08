@@ -4,14 +4,16 @@ var S = require('pull-stream/pull');
 S.drain = require('pull-stream/sinks/drain');
 var noop = function () {};
 
-function Api (fns) {
-    if ( !(this instanceof Api) ) return new Api(fns);
+// take a hash of async functions
+// return an event emitter `bus`, and a method `createReadStream`
+function Bus (fns) {
+    if ( !(this instanceof Bus) ) return new Bus(fns);
     var self = this;
-    this.notify = Notify();
+    this._notify = Notify();
     this.bus = Bus();
 
     S(
-        this.notify.listen(),
+        this._notify.listen(),
         S.drain(function onEvent (ev) {
             self.bus.emit(ev[0], ev[1]);
         }, function onEnd (err) {
@@ -23,21 +25,22 @@ function Api (fns) {
         var fn = fns[k];
         self[k] = function (args, cb) {
             cb = cb || noop;
-            self.notify(['start', args]);
+            self._notify(['start', args]);
             fn(args, function onResp (err, resp) {
                 if (err) {
-                    self.notify(['resolve', args]);
-                    self.notify(['pushError', err]);
+                    self._notify(['resolve', args]);
+                    self._notify(['pushError', err]);
                     return cb(err);
                 }
-                self.notify([k, resp]);
+                self._notify(['resolve', args]);
+                self._notify([k, resp]);
             });
         };
     });
 }
 
-Api.prototype.createReadStream = function () {
-    return this.notify.listen();
+Bus.prototype.createReadStream = function () {
+    return this._notify.listen();
 };
 
-module.exports = Api;
+module.exports = Bus;
