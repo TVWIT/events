@@ -2,7 +2,7 @@ var assign = require('xtend/mutable');
 var xtend = require('xtend');
 var struct = require('observ-struct');
 var observ = require('observ');
-var createWriteStream = require('./lib/wirte-stream');
+var createWriteStream = require('./lib/write-stream');
 
 function Collection (opts) {
     if ( !(this instanceof Collection) ) {
