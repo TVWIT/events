@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "preversion": "npm run lint && npm run deps && npm test",
+    "postversion": "git push && git push --tags",
+    "lint": "eslint .",
+    "deps": "dependency-check package.json && dependency-check package.json --unused --entry test/*.js -i dependency-check -i eslint -i eslint-config-invintus -i tap-spec",
+    "test": "tape test/*.js | tap-spec"
+  },
+  "dependencies": {
+    "event-emitter-demux": "^0.1.2",
+    "nanobus": "^2.1.0",
+    "observ": "^0.2.0",
+    "observ-array": "^3.2.1",
+    "observ-struct": "^6.0.0",
+    "pull-notify": "^0.1.1",
+    "pull-pushable": "^2.0.1",
+    "pull-stream": "^3.5.0",
+    "xtend": "^4.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.17.1",
+    "eslint-config-invintus": "^5.0.1",
+    "tape": "^4.6.3"
+  },
+  "private": true
+}
